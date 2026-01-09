@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: deezit_chain_web
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DB_HOST=${DB_HOST:-db}
+      - DB_USER=${DB_USER:-root}
+      - DB_PASSWORD=${DB_PASSWORD:-root}
+      - DB_NAME=${DB_NAME:-deezit_chain}
+    networks:
+      - npm
+    labels:
+      - "com.docker.compose.project=deezit_chain"
+
+  db:
+    image: mysql:5.7
+    container_name: deezit_chain_db
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+      - MYSQL_DATABASE=${DB_NAME:-deezit_chain}
+      - MYSQL_USER=${DB_USER:-root}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-root}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./BD/deezit_chain.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./mysql-custom.cnf:/etc/mysql/conf.d/custom.cnf:ro
+    networks:
+      - npm
+    labels:
+      - "com.docker.compose.project=deezit_chain"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:
+
+networks:
+  npm:
+    external: true
+    name: npm
+

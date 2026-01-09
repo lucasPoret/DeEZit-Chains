@@ -1,4 +1,11 @@
-<?php session_start();
+<?php 
+// Activer le buffer de sortie pour permettre les redirections après inclusion
+if (!ob_get_level()) {
+    ob_start();
+}
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 $array = explode('/', $_SERVER['PHP_SELF']);
 $nom = explode('.', end($array))[0];?>
 <!DOCTYPE html>
@@ -10,23 +17,23 @@ $nom = explode('.', end($array))[0];?>
     <meta name="keywords" content="DeEZit, Chain, Game, Ez">
     <meta name="author" content="Ez Team">
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../css/header.css" id="header_theme">
-    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
-    <link rel="manifest" href="../favicon/site.webmanifest">
+    <link rel="stylesheet" href="/css/header.css" id="header_theme">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/favicon/site.webmanifest">
     <?php
     if (isset($_COOKIE["theme"])) {	//si le cookie existe
         if ($_COOKIE["theme"] == "dark") {	//si le cookie est égal à dark
-            echo "<link rel='stylesheet' href='../css/dark_header.css' id='header_theme'>";
-            echo "<link rel='stylesheet' href='../css/dark_$nom.css' id='body_theme'>";
+            echo "<link rel='stylesheet' href='/css/dark_header.css' id='header_theme'>";
+            echo "<link rel='stylesheet' href='/css/dark_$nom.css' id='body_theme'>";
         } else {
-            echo "<link rel='stylesheet' href='../css/header.css' id='header_theme'>";
-            echo "<link rel='stylesheet' href='../css/$nom.css' id='body_theme'>";
+            echo "<link rel='stylesheet' href='/css/header.css' id='header_theme'>";
+            echo "<link rel='stylesheet' href='/css/$nom.css' id='body_theme'>";
         }
     } else {
-        echo "<link rel='stylesheet' href='../css/header.css' id='header_theme'>";
-        echo "<link rel='stylesheet' href='../css/$nom.css' id='body_theme'>";
+        echo "<link rel='stylesheet' href='/css/header.css' id='header_theme'>";
+        echo "<link rel='stylesheet' href='/css/$nom.css' id='body_theme'>";
     }
     // if(!isset($_cookie["refresh"]))setcookie("refresh","false",time()+365*24*3600);
     // if($_SERVER['PHP_SELF']!="php/time.php")setcookie("refresh","true",time()+365*24*3600);
@@ -43,7 +50,7 @@ $nom = explode('.', end($array))[0];?>
 
 <body>
 <audio id="bgsound" autoplay loop hidden>
-    <source src="../sound/Rush_EZ.mp3">
+    <source src="/sound/Rush_EZ.mp3">
     Your browser does not support the audio
 </audio>
 
@@ -85,14 +92,14 @@ $nom = explode('.', end($array))[0];?>
         <div class="logo">
             <?php if(isset($_COOKIE["theme"])) {
                 if ($_COOKIE["theme"] == "light") {
-                    echo "<a draggable='false' href='index.php'><img draggable='false' src='../image/logowhite.gif' alt='logo'></a>";
+                    echo "<a draggable='false' href='index.php'><img draggable='false' src='/image/logowhite.gif' alt='logo'></a>";
                 }
                 if ($_COOKIE["theme"] == "dark") {
-                    echo "<a draggable='false' href='index.php'><img draggable='false' src='../image/logodark.gif' alt='logo'></a>";
+                    echo "<a draggable='false' href='index.php'><img draggable='false' src='/image/logodark.gif' alt='logo'></a>";
                 }
             }
             else {
-                echo "<a draggable='false' href='index.php'><img draggable='false' src='../image/logowhite.gif' alt='logo'></a>";
+                echo "<a draggable='false' href='index.php'><img draggable='false' src='/image/logowhite.gif' alt='logo'></a>";
             }?>
 
         </div>
@@ -104,11 +111,11 @@ $nom = explode('.', end($array))[0];?>
             <h1 id="test"> DeEZit Chain </h1>
         </div>
         <div class="classement">
-            <a draggable="false" href="leaderboard.php"><img draggable="false" src="../image/trophy.svg" id='trophy' alt="trophy"></a>
+            <a draggable="false" href="leaderboard.php"><img draggable="false" src="/image/trophy.svg" id='trophy' alt="trophy"></a>
         </div>
         <?php if(isset($_SESSION['username'])) { echo
         "<div class='login'>
-            <img draggable='false' src='../image/login.svg' alt='login'>
+            <img draggable='false' src='/image/login.svg' alt='login'>
             <div class='pop-up'>
                 Bonjour ".$_SESSION['username']."
                 <br />
@@ -118,7 +125,7 @@ $nom = explode('.', end($array))[0];?>
         } else { echo "
         <div class='login'>
             <a draggable='false' href='login.php'>
-                <img draggable='false' src='../image/login.svg' alt='login'>
+                <img draggable='false' src='/image/login.svg' alt='login'>
             </a>
         </div>";
         }
@@ -126,7 +133,7 @@ $nom = explode('.', end($array))[0];?>
 
         <div class="setting">
             <a draggable='false' href="setting.php">
-                <img draggable='false' src="../image/setting.svg" alt="setting">
+                <img draggable='false' src="/image/setting.svg" alt="setting">
             </a>
         </div>
     </div>

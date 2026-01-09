@@ -77,16 +77,22 @@ $lst_tuto = array("tuto1.jpeg","tuto2.jpeg","tuto3.jpeg",0,0,"tuto4.jpeg","tuto5
         <?php
         if (isset($_SESSION["username"])) {
             include("connexion_db.php");
-            $requete2 = "SELECT * FROM user where username='$_SESSION[username]'";
-            $resultat2 = mysqli_query($connexion,$requete2);
-            $row = mysqli_fetch_assoc($resultat2);
-            if (isset($row["history_lvl"])){
-                if ($decrypted_id > $row["history_lvl"]) {
-                    $requete = "UPDATE user SET history_lvl='$decrypted_id' WHERE username='$_SESSION[username]'";
-                    $resultat = mysqli_query($connexion, $requete);
-                    if ($resultat == false) {
-                        echo "<p>Erreur d'exécution de la requete :".mysqli_error($connexion)."</p>";
-                        die();
+            if (!$connexion) {
+                echo "<p>Erreur de connexion à la base de données.</p>";
+            } else {
+                $requete2 = "SELECT * FROM user where username='$_SESSION[username]'";
+                $resultat2 = mysqli_query($connexion,$requete2);
+                if ($resultat2) {
+                    $row = mysqli_fetch_assoc($resultat2);
+                    if (isset($row["history_lvl"])){
+                        if ($decrypted_id > $row["history_lvl"]) {
+                            $requete = "UPDATE user SET history_lvl='$decrypted_id' WHERE username='$_SESSION[username]'";
+                            $resultat = mysqli_query($connexion, $requete);
+                            if ($resultat == false) {
+                                echo "<p>Erreur d'exécution de la requete :".mysqli_error($connexion)."</p>";
+                                die();
+                            }
+                        }
                     }
                 }
             }

@@ -1,19 +1,26 @@
-<?php require './header.php';
+<?php 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if(!(isset($_SESSION["username"]))){
+    header('Location: login.php');
+    exit();
+}
+require './header.php';
 function getScore($pseudo){
     require './connexion_db.php';
+    if (!$connexion) {
+        return 0;
+    }
     $requete = "SELECT adventure_lvl FROM user WHERE username = '$pseudo'";
     $resultat = mysqli_query($connexion, $requete); //Executer la requete
     if ($resultat == FALSE) {
-        echo "<p>Erreur d'exécution de la requete :".mysqli_error($connexion)."</p>";
-        die();
+        return 0;
     }
     $row = mysqli_fetch_assoc($resultat);
-    return $row["adventure_lvl"];
+    return $row ? $row["adventure_lvl"] : 0;
 }
 $score = getScore($_SESSION["username"]);
-if(!(isset($_SESSION["username"]))){
-    header('Location: login.php');
-}
 else if(isset($_COOKIE["valid"])){
     setcookie ("valid", "", time() - 3600,"/");
     $pseudo = $_SESSION["username"];

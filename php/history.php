@@ -110,7 +110,9 @@
                     }
                     else {
                         setcookie("history_lvl", 1, time() + (365 * 24 * 3600));
+                        ob_clean();
                         header("Location: history.php");
+                        exit();
                     }
                 }
             }

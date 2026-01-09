@@ -64,9 +64,10 @@ $crypt = [
 ];
 $decrypted_id = array_search($id,$crypt);
 $next_id = $decrypted_id +1;
-echo $next_id;
+// Ne pas echo ici car cela envoie du contenu avant les headers
 if (!isset($_COOKIE["id"])){
     header('Location: ./index.php');
+    exit();
 }
 if ($_COOKIE["id"] == $id) {
     if ($next_id > 50) {
@@ -74,8 +75,8 @@ if ($_COOKIE["id"] == $id) {
     } else {
         header("Location: ./affichage_history.php?id=$crypt[$next_id]");
     }
+    exit();
 } else {
     header("Location: ./index.php");
+    exit();
 }
-
-exit();

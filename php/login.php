@@ -1,7 +1,12 @@
-<?php require './header.php';
+<?php 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 if (isset($_SESSION["username"])) {
     header("location:index.php");
+    exit();
 }
+require './header.php';
 ?>
 
 <main>
@@ -9,7 +14,9 @@ if (isset($_SESSION["username"])) {
     <div>
         <?php
             include("connexion_db.php");
-            if (isset($_POST['submit'])){
+            if (!$connexion) {
+                echo "<p class='error'>Erreur de connexion à la base de données. Veuillez réessayer plus tard.</p>";
+            } elseif (isset($_POST['submit'])){
                 $username = $_POST["username"];
                 $password = $_POST['password'];
                 $requete = "select * from user where username='$username'"; //selectionner le mail, password, et ID de la table membre
@@ -23,13 +30,16 @@ if (isset($_SESSION["username"])) {
                     if (mysqli_num_rows($resultat) == 1 and password_verify($password,$row['password'])) {
                         $_SESSION["username"] = $row["username"];
                         header("location:index.php");
+                        exit();
                     }
                     else{
                         echo '<p class="error">Echec de connexion: identifiants incorrects</p>';
                     }
                 }
             }
-            mysqli_close($connexion);
+            if (isset($connexion) && $connexion !== false) {
+                mysqli_close($connexion);
+            }
         ?>
         
         <nav class="formulaire">
