@@ -5,8 +5,11 @@
     <?php
     include("connexion_db.php");
     if (isset($_SESSION["username"])) {
-        $requete2 = "SELECT * FROM user where username='$_SESSION[username]'";
-        $resultat2 = mysqli_query($connexion,$requete2);
+        if (!$connexion) {
+            echo "<p class='error'>Erreur de connexion à la base de données. Veuillez réessayer plus tard.</p>";
+        } else {
+            $requete2 = "SELECT * FROM user where username='$_SESSION[username]'";
+            $resultat2 = mysqli_query($connexion,$requete2);
         $row = mysqli_fetch_assoc($resultat2);
         if (isset($row["history_lvl"])) {
             $requete = "UPDATE user SET history_lvl=51 WHERE username='$_SESSION[username]'";
@@ -15,6 +18,7 @@
                 echo "<p>Erreur d'exécution de la requete :".mysqli_error($connexion)."</p>";
                 die();
             }
+        }
         }
     }
     else {

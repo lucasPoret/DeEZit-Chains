@@ -66,33 +66,44 @@
             "g42DB83P7bx1wbXDz30nbVQW2X6l",
             "d0M4kY0y17VoG7PfjVN892eoKF8q"
         ];
+        
+        // Récupérer history_lvl une seule fois avant les boucles
+        $history_lvl = null;
+        if (isset($_SESSION["username"])) {
+            include("connexion_db.php");
+            if (!$connexion) {
+                echo "<p class='error'>Erreur de connexion à la base de données. Veuillez réessayer plus tard.</p>";
+            } else {
+                $username = $_SESSION["username"];
+                $requete = "SELECT history_lvl FROM user WHERE username='$username'";
+                $resultat = mysqli_query($connexion, $requete);
+                if ($resultat == false) {
+                    echo "<p>Erreur d'exécution de la requete :".mysqli_error($connexion)."</p>";
+                    die();
+                } else {
+                    $row = mysqli_fetch_assoc($resultat);
+                    if (mysqli_num_rows($resultat) == 1) {
+                        $history_lvl = $row["history_lvl"];
+                    }
+                }
+            }
+        }
+        
         for ($i = 0; $i < 10; $i++) {
             for ($j = 0; $j < 5; $j++) {
                 $num = 5 * $i + $j + 1;
                 if (isset($_SESSION["username"])) {
-                    include("connexion_db.php");
-                    $username = $_SESSION["username"];
-                    $requete = "SELECT history_lvl FROM user WHERE username='$username'";
-                    $resultat = mysqli_query($connexion,$requete);
-                    if ($resultat == false) {
-                        echo "<p>Erreur d'exécution de la requete :".mysqli_error($connexion)."</p>";
-                        die();
-                    }
-                    else {
-                        $row = mysqli_fetch_assoc($resultat);
-                        if (mysqli_num_rows($resultat) == 1 && $num <= $row["history_lvl"]) {
-                            if ($num == $row["history_lvl"]) {
-                                echo "<a draggable='false' class='btn' class='line$i' class='col$j' href='affichage_history.php?id=$id[$num]'>$num</a>";
-                            }
-                            else {
-                                echo "<a draggable='false' class='btn_done' class='line$i' class='col$j' href='affichage_history.php?id=$id[$num]'>$num</a>";
-                            }
+                    if ($history_lvl !== null && $num <= $history_lvl) {
+                        if ($num == $history_lvl) {
+                            echo "<a draggable='false' class='btn' class='line$i' class='col$j' href='affichage_history.php?id=$id[$num]'>$num</a>";
                         }
                         else {
-                            echo "<p draggable='false' class='btn_close' class='line$i' class='col$j' href='affichage_history.php?id=$id[$num]'>$num</p>";
+                            echo "<a draggable='false' class='btn_done' class='line$i' class='col$j' href='affichage_history.php?id=$id[$num]'>$num</a>";
                         }
                     }
-
+                    else {
+                        echo "<p draggable='false' class='btn_close' class='line$i' class='col$j' href='affichage_history.php?id=$id[$num]'>$num</p>";
+                    }
                 }
                 else {
                     if (isset($_COOKIE["history_lvl"])) {
@@ -116,6 +127,11 @@
                     }
                 }
             }
+        }
+        
+        // Fermer la connexion si elle a été ouverte
+        if (isset($connexion) && $connexion !== false) {
+            mysqli_close($connexion);
         }
         ?>
     </div>

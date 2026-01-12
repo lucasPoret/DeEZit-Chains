@@ -25,9 +25,12 @@ if (isset($_SESSION["username"])) {
     <?php
     include("connexion_db.php");
     if(isset($_POST["submit"])) {
-        $username = $_POST['username'];
-        $requete = "SELECT * FROM user WHERE username='$username'";
-        $resultat = mysqli_query($connexion,$requete);
+        if (!$connexion) {
+            echo "<p class='error'>Erreur de connexion à la base de données. Veuillez réessayer plus tard.</p>";
+        } else {
+            $username = $_POST['username'];
+            $requete = "SELECT * FROM user WHERE username='$username'";
+            $resultat = mysqli_query($connexion,$requete);
 
         if ($resultat == FALSE) {
             echo "<p>Erreur d'exécution de la requete :".mysqli_error($connexion)."</p>" ;
@@ -57,8 +60,11 @@ if (isset($_SESSION["username"])) {
                 }   
             }
         }
+        }
     }
-    mysqli_close($connexion);
+    if (isset($connexion) && $connexion !== false) {
+        mysqli_close($connexion);
+    }
     ?>
 
 

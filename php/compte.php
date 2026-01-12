@@ -22,6 +22,10 @@
 
     <?php
     include("connexion_db.php");
+    if (!$connexion) {
+        echo "<p class='error'>Erreur de connexion à la base de données. Veuillez réessayer plus tard.</p>";
+        die();
+    }
     $username = $_SESSION["username"];
     $requete = "SELECT * FROM user WHERE username='$username'";
     $resultat = mysqli_query($connexion,$requete);

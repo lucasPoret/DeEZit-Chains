@@ -34,28 +34,46 @@ else{
     
 function getScore($pseudo) {
     require './connexion_db.php';
+    if (!$connexion) {
+        error_log("Erreur: Impossible de se connecter à la base de données dans getScore");
+        return 0;
+    }
     $requete = "SELECT current_time_trial FROM user WHERE username = '$pseudo'";
     $resultat = mysqli_query($connexion, $requete); //Executer la requete
     if ($resultat == FALSE) {
-        echo "<p>Erreur d'exécution de la requete :" . mysqli_error($connexion) . "</p>";
-        die();
+        error_log("Erreur d'exécution de la requete :" . mysqli_error($connexion));
+        if (isset($connexion) && $connexion !== false) {
+            mysqli_close($connexion);
+        }
+        return 0;
     }
     $row = mysqli_fetch_assoc($resultat);
-    mysqli_close($connexion);
-    return $row["current_time_trial"];
+    if (isset($connexion) && $connexion !== false) {
+        mysqli_close($connexion);
+    }
+    return $row ? $row["current_time_trial"] : 0;
 }
 
 function getBestScoreAll() {
     require './connexion_db.php';
+    if (!$connexion) {
+        error_log("Erreur: Impossible de se connecter à la base de données dans getBestScoreAll");
+        return 0;
+    }
     $requete = "SELECT time_trial FROM user WHERE time_trial = (SELECT MAX(time_trial) FROM user)";
     $resultat = mysqli_query($connexion, $requete); //Executer la requete
     if ($resultat == FALSE) {
-        echo "<p>Erreur d'exécution de la requete :" . mysqli_error($connexion) . "</p>";
-        die();
+        error_log("Erreur d'exécution de la requete :" . mysqli_error($connexion));
+        if (isset($connexion) && $connexion !== false) {
+            mysqli_close($connexion);
+        }
+        return 0;
     }
     $row = mysqli_fetch_array($resultat);
-    mysqli_close($connexion);
-    return $row["time_trial"];
+    if (isset($connexion) && $connexion !== false) {
+        mysqli_close($connexion);
+    }
+    return $row ? $row["time_trial"] : 0;
 }
 
 
@@ -73,11 +91,17 @@ else {
         setcookie("valid", "", time() - 3600, "/");
         unset($_COOKIE["valid"]);
         require './connexion_db.php';
-        $score = getScore($_SESSION["username"]);
-        $score++;
-        $requete = "UPDATE user SET current_time_trial = '$score' WHERE username = '$pseudo'";
-        $resultat = mysqli_query($connexion, $requete); //Executer la requete
-        mysqli_close($connexion);
+        if (!$connexion) {
+            error_log("Erreur: Impossible de se connecter à la base de données");
+        } else {
+            $score = getScore($_SESSION["username"]);
+            $score++;
+            $requete = "UPDATE user SET current_time_trial = '$score' WHERE username = '$pseudo'";
+            $resultat = mysqli_query($connexion, $requete); //Executer la requete
+            if (isset($connexion) && $connexion !== false) {
+                mysqli_close($connexion);
+            }
+        }
         //header('Location: time.php');
         
     }
@@ -87,9 +111,18 @@ else {
     }
     else if($time_left > 180 || $time_left <= 0){
         require './connexion_db.php';
+        if (!$connexion) {
+            error_log("Erreur: Impossible de se connecter à la base de données");
+            header('Location: index.php');
+            exit();
+        }
         $requete = "UPDATE user SET current_time_trial = '0' WHERE username = '$pseudo'";
         $resultat = mysqli_query($connexion, $requete); //Executer la requete
+        if (isset($connexion) && $connexion !== false) {
+            mysqli_close($connexion);
+        }
         header('Location: index.php');
+        exit();
     }
 
 }
@@ -261,8 +294,15 @@ ${formatTime(timeLeft)}
 
         else { // Sinon il faut creer un nouveau niveau
             require './connexion_db.php';
-            $requete = "UPDATE user SET time_trial = '$score' WHERE username = '$pseudo'";
-            $resultat = mysqli_query($connexion, $requete); //Executer la requete
+            if (!$connexion) {
+                error_log("Erreur: Impossible de se connecter à la base de données");
+            } else {
+                $requete = "UPDATE user SET time_trial = '$score' WHERE username = '$pseudo'";
+                $resultat = mysqli_query($connexion, $requete); //Executer la requete
+                if (isset($connexion) && $connexion !== false) {
+                    mysqli_close($connexion);
+                }
+            }
             $seed = time();
             $colours = time()%5 + 1;
             if (DIRECTORY_SEPARATOR == '\\') {

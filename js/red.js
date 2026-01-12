@@ -2,11 +2,15 @@ const red = document.querySelector('.r'); //variable qui recup la base
 //const green = document.querySelector('.g'); //variable qui recup la base
 const box = document.querySelectorAll('.case'); //variable qui recup toutes les cases
 const mouse = document.querySelector('tableau');
-red.addEventListener("click", clearr);
+if (red) {
+    red.addEventListener("click", clearr);
+}
 lvlr = 1;
 trackr = [];
 startr = document.querySelector('.r');
-trackr.unshift(startr);
+if (startr) {
+    trackr.unshift(startr);
+}
 securiter = true;
 next_tourr = false;
 ajoutr = -1;
@@ -16,9 +20,11 @@ let posx = 0;
 let posy = 0;
 indice=Number(getCookie("time_lvl")) ;
 
-red.addEventListener('drag', drag);
-red.addEventListener('dragstart', dragStartr); //event: lorsqu'on commence a drag appel la fonction dragStart
-red.addEventListener('dragend', dragEndr); //event: lorsqu'on lache l'objet appel la fonction dargEnd
+if (red) {
+    red.addEventListener('drag', drag);
+    red.addEventListener('dragstart', dragStartr); //event: lorsqu'on commence a drag appel la fonction dragStart
+    red.addEventListener('dragend', dragEndr); //event: lorsqu'on lache l'objet appel la fonction dargEnd
+}
 //green.addEventListener('dragstart', dragStart); //event: lorsqu'on commence a drag appel la fonction dragStart
 //green.addEventListener('dragend', dragEnd); //event: lorsqu'on lache l'objet appel la fonction dargEnd
 

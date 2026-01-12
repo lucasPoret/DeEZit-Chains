@@ -21,7 +21,7 @@ function getScore($pseudo){
     return $row ? $row["adventure_lvl"] : 0;
 }
 $score = getScore($_SESSION["username"]);
-else if(isset($_COOKIE["valid"])){
+if(isset($_COOKIE["valid"])){
     setcookie ("valid", "", time() - 3600,"/");
     $pseudo = $_SESSION["username"];
     require './connexion_db.php';
@@ -89,8 +89,17 @@ else if(isset($_COOKIE["valid"])){
     if (DIRECTORY_SEPARATOR == '\\') {
         exec("randomGenerate.exe $seed $colours", $tab);
     } else {
-        exec("chmod a+x ./randomGenerate");
-        exec("./randomGenerate $seed $colours", $tab);
+        // Utiliser le chemin absolu pour Docker
+        $scriptDir = __DIR__;
+        $randomGeneratePath = "$scriptDir/randomGenerate";
+        // S'assurer que le fichier est exécutable
+        @chmod($randomGeneratePath, 0755);
+        // Exécuter sans capturer les erreurs (comme dans time.php)
+        exec("$randomGeneratePath $seed $colours", $tab);
+        // Si le tableau est vide, essayer avec le chemin relatif
+        if (count($tab) == 0) {
+            exec("./randomGenerate $seed $colours", $tab);
+        }
     }
 
     $size = count($tab);

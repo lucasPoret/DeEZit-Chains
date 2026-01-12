@@ -17,8 +17,11 @@
 
         <?php
         include("connexion_db.php");
-        $requete = "SELECT username,adventure_lvl FROM user ORDER BY adventure_lvl DESC, username ASC limit 8";
-        $resultat = mysqli_query($connexion, $requete); //Executer la requete
+        if (!$connexion) {
+            echo "<p class='error'>Erreur de connexion à la base de données. Veuillez réessayer plus tard.</p>";
+        } else {
+            $requete = "SELECT username,adventure_lvl FROM user ORDER BY adventure_lvl DESC, username ASC limit 8";
+            $resultat = mysqli_query($connexion, $requete); //Executer la requete
         if ($resultat == FALSE) {
             echo "<p>Erreur d'exécution de la requete :".mysqli_error($connexion)."</p>";
             die();
@@ -78,6 +81,7 @@
         }
         echo "</table>";
         mysqli_close($connexion); //Fermer la connexion
+        }
 
 
 

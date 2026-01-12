@@ -9,8 +9,11 @@ function download(filename, textInput) {
 }
 
 filename = "niveauExporter";
-document.getElementById("namelvl").oninput = function () {
-    filename = document.getElementById("namelvl").value;
+const namelvlElement = document.getElementById("namelvl");
+if (namelvlElement) {
+    namelvlElement.oninput = function () {
+        filename = document.getElementById("namelvl").value;
+    }
 }
 
 
